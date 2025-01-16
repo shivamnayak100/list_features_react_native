@@ -34,15 +34,15 @@ const DocumentListScreen = () => {
   }, [page, isFetching, fetchTransferSpaceDocuments]);
 
   const renderDocumentItem = (item: Document) => (
-    <View style={styles.card} key={item.id}> {/* Ensure each item has a unique key */}
+    <View style={styles.card} key={item.id?.toString()}>
       <Image source={{ uri: item.company_logo }} style={styles.logo} />
       <View style={styles.infoContainer}>
-        <Text style={styles.subtitle}>{item.file_name}</Text>
-        <Text style={styles.subtitle}>{item.doc_date}</Text>
-        <Text style={styles.subtitle}>{item.reference_number}</Text>
+        <Text style={styles.subtitle}>{item.file_name?.toString() || 'N/A'}</Text>
+        <Text style={styles.subtitle}>{item.doc_date?.toString() || 'N/A'}</Text>
+        <Text style={styles.subtitle}>{item.reference_number?.toString() || 'N/A'}</Text>
       </View>
     </View>
-  );
+  );  
 
   const handleLoadMore = () => {
     if (!isFetching && !isLoading) {
@@ -88,7 +88,7 @@ const DocumentListScreen = () => {
       <ListComponent<Document>
         data={docsList}
         renderItem={renderDocumentItem}
-        keyExtractor={(item) => item.id.toString()} // Ensure each item has a unique key
+        keyExtractor={(item) => item.id?.toString() || ''} // Ensure each item has a unique key not null 
         emptyMessage="No documents found."
         onEndReached={handleEndReached}  // Triggers when user scrolls to the bottom
         onEndReachedThreshold={0.5}  // Trigger pagination when the user is halfway down
