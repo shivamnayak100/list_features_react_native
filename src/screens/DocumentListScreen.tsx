@@ -1,11 +1,17 @@
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, Image } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, View, Text, StyleSheet, ActivityIndicator, Image } from 'react-native';
 import { useDocumentStore } from '../stores/zustand/documentStore';
-import ListComponent from '../components/ListComponent';
+import ListComponent from '../components/ListComponent';  // Assuming this is your custom List component
 import { Document } from '../types/documentType';
+
+const screenWidth = Dimensions.get('window').width;
 
 const DocumentListScreen = () => {
   const { isLoading, isError, docsList, fetchTransferSpaceDocuments } = useDocumentStore();
+
+  // State for pagination
+  const [page, setPage] = useState(1);
+  const [isFetching, setIsFetching] = useState(false);
 
   const payload = {
     search_query: '',
@@ -14,29 +20,46 @@ const DocumentListScreen = () => {
     doc_to_date: '',
     doc_status: 0,
     platform: true,
-    page: 1,
+    page,
     page_size: 10,
     sort_type: 0,
     sort_order: 0,
   };
-  
 
   useEffect(() => {
+    if (isFetching || isLoading) return; // Prevent multiple API calls
+    console.log(`############33 ${payload.page}`);
     fetchTransferSpaceDocuments(payload);
-  }, []);
+  },[page, isFetching, fetchTransferSpaceDocuments]);
 
   const renderDocumentItem = (item: Document) => (
     <View style={styles.card}>
       <Image source={{ uri: item.company_logo }} style={styles.logo} />
       <View style={styles.infoContainer}>
-        <Text style={styles.title}>{item.doc_name}</Text>
         <Text style={styles.subtitle}>{item.doc_date}</Text>
         <Text style={styles.subtitle}>{item.reference_number}</Text>
       </View>
     </View>
   );
 
-  if (isLoading) {
+  const handleLoadMore = () => {
+    if (!isFetching && !isLoading) {
+      setPage(prevPage => prevPage + 1);  // Increment the page number
+      setIsFetching(true); // Set fetching state to true
+    }
+  };
+
+  const handleEndReached = () => {
+    // When the list reaches the end, trigger the `handleLoadMore` function
+    handleLoadMore();
+  };
+
+  const handleRefresh = () => {
+    setPage(1); // Reset to the first page
+    setIsFetching(true);
+  };
+
+  if (isLoading && page === 1) {
     return (
       <View style={styles.loader}>
         <ActivityIndicator size="large" color="blue" />
@@ -59,6 +82,16 @@ const DocumentListScreen = () => {
         renderItem={renderDocumentItem}
         keyExtractor={(item) => item.id.toString()}
         emptyMessage="No documents found."
+        onEndReached={handleEndReached}  // Triggers when user scrolls to the bottom
+        onEndReachedThreshold={0.5}  // Trigger pagination when the user is halfway down
+        ListFooterComponent={
+          isFetching ? (
+            <View style={styles.loader}>
+              <ActivityIndicator size="large" color="blue" />
+            </View>
+          ) : null
+        }
+        onRefresh={handleRefresh}
       />
     </View>
   );
@@ -86,6 +119,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   card: {
+    width: screenWidth,
     padding: 10,
     marginVertical: 5,
     borderRadius: 8,
@@ -113,6 +147,11 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 14,
     color: '#666',
+  },
+  emptyMessage: {
+    textAlign: 'center',
+    fontSize: 16,
+    color: '#888',
   },
 });
 
