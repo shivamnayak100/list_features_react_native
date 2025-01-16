@@ -45,7 +45,7 @@ const ListComponent = <T,>({
           ListFooterComponent
         )
       }
-      refreshing={refreshing}
+      refreshing={refreshing} // remove pull to refresh 
       onRefresh={onRefresh}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

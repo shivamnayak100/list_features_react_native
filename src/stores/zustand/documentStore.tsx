@@ -19,7 +19,11 @@ export const useDocumentStore = create<DocumentStore>((set) => ({
     set({ isLoading: true}); 
     try {
       const response = await fetchTransferSpaceDocuments(payload); // Fetch data
-      set({ docsList: response.documents, isLoading: false }); // Update the docsList with the fetched data
+      // Append the new documents to the existing docsList
+      set((state) => ({
+        docsList: [...state.docsList, ...response.documents], // Merging the previous docsList with the new data
+        isLoading: false,
+      }));
     } catch (error) {
       console.error('Failed to fetch documents:', error);
       set({ isError: true, isLoading: false }); 

@@ -27,15 +27,15 @@ const DocumentListScreen = () => {
   };
 
   useEffect(() => {
-    if (isFetching || isLoading) return; // Prevent multiple API calls
-    console.log(`############33 ${payload.page}`);
-    fetchTransferSpaceDocuments(payload);
-  },[page, isFetching, fetchTransferSpaceDocuments]);
+    console.log(`######################333 ${page}`);
+    fetchTransferSpaceDocuments(payload); // Call the API after page change
+  }, [page, isFetching, fetchTransferSpaceDocuments]);  // Add dependencies
 
   const renderDocumentItem = (item: Document) => (
     <View style={styles.card}>
       <Image source={{ uri: item.company_logo }} style={styles.logo} />
       <View style={styles.infoContainer}>
+         <Text style={styles.subtitle}>{item.file_name}</Text>
         <Text style={styles.subtitle}>{item.doc_date}</Text>
         <Text style={styles.subtitle}>{item.reference_number}</Text>
       </View>
@@ -44,8 +44,9 @@ const DocumentListScreen = () => {
 
   const handleLoadMore = () => {
     if (!isFetching && !isLoading) {
+      console.log(`#############3 handleLoadMore`);
       setPage(prevPage => prevPage + 1);  // Increment the page number
-      setIsFetching(true); // Set fetching state to true
+      setIsFetching(false);  // Set fetching state to true to avoid multiple API calls
     }
   };
 
@@ -56,7 +57,7 @@ const DocumentListScreen = () => {
 
   const handleRefresh = () => {
     setPage(1); // Reset to the first page
-    setIsFetching(true);
+    setIsFetching(false);
   };
 
   if (isLoading && page === 1) {
@@ -126,32 +127,21 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
   },
   logo: {
     width: 50,
     height: 50,
+    marginBottom: 10,
     borderRadius: 25,
-    marginRight: 10,
   },
   infoContainer: {
-    flex: 1,
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
+    paddingLeft: 10,
   },
   subtitle: {
     fontSize: 14,
-    color: '#666',
-  },
-  emptyMessage: {
-    textAlign: 'center',
-    fontSize: 16,
-    color: '#888',
+    color: 'gray',
   },
 });
 
