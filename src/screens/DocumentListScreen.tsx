@@ -21,21 +21,23 @@ const DocumentListScreen = () => {
     doc_status: 0,
     platform: true,
     page,
-    page_size: 10,
+    page_size: 20,
     sort_type: 0,
     sort_order: 0,
   };
 
   useEffect(() => {
-    console.log(`######################333 ${page}`);
-    fetchTransferSpaceDocuments(payload); // Call the API after page change
-  }, [page, isFetching, fetchTransferSpaceDocuments]);  // Add dependencies
+    console.log(`Fetching page: ${page}`);
+    if (!isFetching) {
+      fetchTransferSpaceDocuments(payload); // Call the API after page change
+    }
+  }, [page, isFetching, fetchTransferSpaceDocuments]);
 
   const renderDocumentItem = (item: Document) => (
-    <View style={styles.card}>
+    <View style={styles.card} key={item.id}> {/* Ensure each item has a unique key */}
       <Image source={{ uri: item.company_logo }} style={styles.logo} />
       <View style={styles.infoContainer}>
-         <Text style={styles.subtitle}>{item.file_name}</Text>
+        <Text style={styles.subtitle}>{item.file_name}</Text>
         <Text style={styles.subtitle}>{item.doc_date}</Text>
         <Text style={styles.subtitle}>{item.reference_number}</Text>
       </View>
@@ -44,9 +46,8 @@ const DocumentListScreen = () => {
 
   const handleLoadMore = () => {
     if (!isFetching && !isLoading) {
-      console.log(`#############3 handleLoadMore`);
-      setPage(prevPage => prevPage + 1);  // Increment the page number
-      setIsFetching(false);  // Set fetching state to true to avoid multiple API calls
+      setIsFetching(true); // Start fetching data
+      setPage(prevPage => prevPage + 1); // Increment the page number
     }
   };
 
@@ -59,6 +60,12 @@ const DocumentListScreen = () => {
     setPage(1); // Reset to the first page
     setIsFetching(false);
   };
+
+  // When the API fetches data, set isFetching to false after data is loaded
+  useEffect(() => {
+    if (!isFetching || isLoading) return; // Prevent updating state when already fetching or loading
+    setIsFetching(false); // Reset isFetching once the documents are fetched
+  }, [docsList, isFetching, isLoading]);
 
   if (isLoading && page === 1) {
     return (
@@ -81,7 +88,7 @@ const DocumentListScreen = () => {
       <ListComponent<Document>
         data={docsList}
         renderItem={renderDocumentItem}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.id.toString()} // Ensure each item has a unique key
         emptyMessage="No documents found."
         onEndReached={handleEndReached}  // Triggers when user scrolls to the bottom
         onEndReachedThreshold={0.5}  // Trigger pagination when the user is halfway down
