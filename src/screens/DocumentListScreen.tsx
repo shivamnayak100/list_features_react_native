@@ -16,13 +16,25 @@ const DocumentListScreen = () => {
 
   // State for search query
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Debounce logic
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedQuery(searchQuery); // Update the debounced query after 500ms
+    }, 500);
+
+    return () => {
+      clearTimeout(handler); // Clear timeout on each render to reset the delay
+    };
+  }, [searchQuery]);
 
   // Fetch documents
   const fetchDocuments = useCallback(async () => {
     setIsLoading(true); // Show loader for ListComponent
     const payload = {
-      search_query: searchQuery,
+      search_query: debouncedQuery, // Use debounced query
       company_id: 0,
       doc_from_date: '',
       doc_to_date: '',
@@ -35,9 +47,9 @@ const DocumentListScreen = () => {
     };
     await fetchTransferSpaceDocuments(payload, page === 1); // Fetch documents based on payload
     setIsLoading(false); // Hide loader
-  }, [searchQuery, page, fetchTransferSpaceDocuments]);
+  }, [debouncedQuery, page, fetchTransferSpaceDocuments]);
 
-  // Trigger fetch on search query or page change
+  // Trigger fetch on debouncedQuery or page change
   useEffect(() => {
     fetchDocuments();
   }, [fetchDocuments]);
@@ -83,7 +95,7 @@ const DocumentListScreen = () => {
         emptyMessage="No documents found."
         onEndReached={handleLoadMore} // Trigger pagination
         onEndReachedThreshold={0.5}
-        refreshing={isFetching || isLoading}
+        // refreshing={isFetching || isLoading}
         onRefresh={handleRefresh}
         ListFooterComponent={
           isLoading && (
