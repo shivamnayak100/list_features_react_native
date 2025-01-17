@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Dimensions, View, Text, StyleSheet, ActivityIndicator, Image } from 'react-native';
 import { useDocumentStore } from '../stores/zustand/documentStore';
+import { Appbar } from 'react-native-paper';
 import ListComponent from '../components/reusable_component/ListComponent'; // Assuming this is your custom List component
 import SearchBar from '../components/reusable_component/SearchBar'; // Importing the new SearchBar component
 import { Document } from '../types/documentType';
-
+import { GalleryTheme } from '../utils/theme';
 const screenWidth = Dimensions.get('window').width;
 
 const DocumentListScreen = () => {
@@ -83,6 +84,10 @@ const DocumentListScreen = () => {
 
   return (
     <View style={styles.container}>
+        <Appbar.Header style={styles.appbar}>
+        <Appbar.Content title="Document List" subtitle="Browse and search documents" />
+      </Appbar.Header>
+
       <SearchBar
         value={searchQuery}
         onChangeText={setSearchQuery}
@@ -112,8 +117,7 @@ const DocumentListScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
-    marginTop: 30,
+    padding: 0,
     backgroundColor: '#f9f9f9',
   },
   loader: {
@@ -144,6 +148,11 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 14,
     color: 'gray',
+  },
+  appbar: {
+    backgroundColor: GalleryTheme.colors.primary, // Set to the red color you prefer
+    elevation: 10, // Add shadow for depth
+    width: screenWidth, // Ensure full width of the screen is covered
   },
 });
 
