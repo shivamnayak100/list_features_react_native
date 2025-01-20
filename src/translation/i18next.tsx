@@ -8,7 +8,7 @@ export const resources = {
     en: {
       translation: require('./en.json'),
     },
-    es: {
+    fr: {
       translation: require('./fr.json'),
     },
   };
