@@ -6,6 +6,7 @@ import ListComponent from '../components/reusable_component/ListComponent'; // A
 import SearchBar from '../components/reusable_component/SearchBar'; // Importing the new SearchBar component
 import { Document } from '../types/documentType';
 import { GalleryTheme } from '../utils/theme';
+import { t } from 'i18next';
 const screenWidth = Dimensions.get('window').width;
 
 const DocumentListScreen = () => {
@@ -85,7 +86,7 @@ const DocumentListScreen = () => {
   return (
     <View style={styles.container}>
         <Appbar.Header style={styles.appbar}>
-        <Appbar.Content title="Document List" subtitle="Browse and search documents" />
+        <Appbar.Content title={t('welcome')} subtitle="Browse and search documents" />
       </Appbar.Header>
 
       <SearchBar

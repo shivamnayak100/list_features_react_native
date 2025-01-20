@@ -2,6 +2,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import DocumentListScreen from './src/screens/DocumentListScreen';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { CustomTheme } from './src/utils/theme';
+import './src/translation/i18next'
 
 export default function App() {
   return (
