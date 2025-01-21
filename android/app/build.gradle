@@ -101,6 +101,18 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            storeFile file('list_features.keystore')
+            storePassword '123456'
+            keyAlias 'hello'
+            keyPassword '123456'
+        }
+        // release {
+        //     storeFile file('list_features.keystore')
+        //     storePassword System.console().readLine("\nKeystore password:")
+        //     keyAlias System.console().readLine("\nAlias: ")
+        //     keyPassword System.console().readLine("\nAlias password: ")
+        // }
     }
     buildTypes {
         debug {
